@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Alert } from 'react-native';
 
 
 const API_BASE_URL = 'http://192.168.58.112:5000/api/photo';
@@ -22,8 +23,14 @@ export const savePhoto = async (photo: any, description: string) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error saving photo:', error);
-    throw error;
+    if(axios.isAxiosError(error)){
+      console.error('Axios error details:',{
+        message: error.message,
+        code: error.code,
+        config: error.config,
+        response: error.config,
+      })
+    }
   }
 };
 
@@ -34,7 +41,15 @@ export const getPhotos = async () => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching photos:', error);
-    throw error;
+    if(axios.isAxiosError(error)){
+      console.error('Axios error details:',{
+        message: error.message,
+        code: error.code,
+        config: error.config,
+        response: error.config,
+      })
+    }
   }
-};
+}
+
+

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TextInput } from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, TextInput, Alert, Pressable, Button } from 'react-native';
 import { savePhoto, getPhotos } from '../components/Api';
 import { MyButton } from '../components/MyButton';
+import axios from 'axios';
 
 
 interface Photo {
@@ -28,24 +29,16 @@ export const HomeScreen = () => {
     }
   };
 
-  // const handlePhotoCapture = async (photo: any) => {
-  //   try {
-  //     await savePhoto(photo, description);
-  //     setDescription('');
-  //     fetchPhotos();
-  //   } catch (error) {
-  //     console.error('Error saving photo:', error);
-  //   }
-  // };
-  const handleSavePhoto = async (photo: any, description: string) => {
+  const handlePhotoCapture = async (photo: any) => {
     try {
-      const data = await savePhoto(photo, description);
-      console.log('Photo saved:', data);
-      fetchPhotos(); // Refetch photos after saving a new one
+      await savePhoto(photo, description);
+      setDescription('');
+      fetchPhotos();
     } catch (error) {
       console.error('Error saving photo:', error);
     }
   };
+
   
 
   const renderPhoto = ({ item }: { item: Photo }) => (
@@ -55,38 +48,40 @@ export const HomeScreen = () => {
     </View>
   );
 
+  //probar
+  const checkApiAccess = async () => {
+    try {
+      const response = await axios.get('http://192.168.58.112:5000//api/photo/photos');
+      if (response.status === 200) {
+        Alert.alert('Success', 'API is accessible');
+        console.log('API is accessible');
+      } else {
+        Alert.alert('Error', `API responded with status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error accessing API:', error);
+      Alert.alert('Error', `Failed to access API:`);
+    }
+  };
 
-  // return (
-  //   <View style={styles.container}>
-  //     <TextInput
-  //       style={styles.input}
-  //       value={description}
-  //       onChangeText={setDescription}
-  //       placeholder="Enter photo description"
-  //     />
-  //     <MyButton onPhotoCapture={handlePhotoCapture} />
-  //     <FlatList
-  //       data={photos}
-  //       renderItem={renderPhoto}
-  //       keyExtractor={(item) => item.id}
-  //     />
-  //   </View>
-  // );
+
   return (
     <View style={styles.container}>
-      <MyButton onPhotoCapture={(photo) => handleSavePhoto(photo, 'Descripción de prueba')} />
+      <TextInput
+        style={styles.input}
+        value={description}
+        onChangeText={setDescription}
+        placeholder="Enter photo description"
+      />
+      <MyButton onPhotoCapture={handlePhotoCapture} />
       <FlatList
         data={photos}
+        renderItem={renderPhoto}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.photoContainer}>
-            <Image source={{ uri: item.url }} style={styles.photo} />
-            <Text>{item.description}</Text>
-          </View>
-        )}
       />
     </View>
   );
+
 };
 
 const styles = StyleSheet.create({
@@ -113,4 +108,8 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 });
+
+
+
+
 
