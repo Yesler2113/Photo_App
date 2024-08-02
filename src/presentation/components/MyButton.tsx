@@ -52,7 +52,7 @@ export const MyButton = ({ onPhotoCapture }: MyButtonProps) => {
 
       launchCamera(options, (response) => {
         if (response.didCancel) {
-          console.log('User cancelled image picker');
+          console.log('cancelado');
         } else if (response.errorCode) {
           console.log('ImagePicker Error: ', response.errorMessage);
           Alert.alert("Error", "No se pudo abrir la cámara. Por favor, intenta de nuevo.");
